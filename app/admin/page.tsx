@@ -1,0 +1,32 @@
+﻿'use client';
+import {useEffect,useState,useCallback} from 'react';import {sb} from '@/lib/supabase';
+const D=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+const hoy=()=>new Date().toLocaleDateString('en-CA',{timeZone:'America/Bogota'});
+export default function Admin(){
+const [u,setU]=useState<any>(null),[em,setEm]=useState(''),[pw,setPw]=useState(''),[err,setErr]=useState(''),[tab,setTab]=useState('hoy');
+const [bk,setBk]=useState<any[]>([]),[wh,setWh]=useState<any[]>([]),[bl,setBl]=useState<any[]>([]),[st,setSt]=useState<any>({});
+const load=useCallback(async()=>{
+ setBk((await sb.from('bookings').select('*').order('day').order('at')).data||[]);setWh((await sb.from('weekly_hours').select('*').order('dow').order('opens')).data||[]);
+ setBl((await sb.from('blocks').select('*').order('day')).data||[]);setSt((await sb.from('settings').select('*').single()).data||{})},[]);
+useEffect(()=>{sb.auth.getSession().then(({data})=>setU(data.session?.user??null))},[]);useEffect(()=>{if(u)load()},[u,load]);
+const login=async(e:any)=>{e.preventDefault();const {data,error}=await sb.auth.signInWithPassword({email:em,password:pw});if(error)setErr('Correo o contraseña incorrectos');else setU(data.user)};
+const add=(t:string)=>async(e:any)=>{e.preventDefault();const f:any=Object.fromEntries(new FormData(e.currentTarget));for(const k in f)if(f[k]==='')f[k]=null;await sb.from(t).insert(f);e.target.reset();load()};
+const del=async(t:string,id:number)=>{await sb.from(t).delete().eq('id',id);load()};
+const setStatus=async(id:string,status:string)=>{await sb.from('bookings').update({status}).eq('id',id);load()};
+const upd=async(v:any)=>{await sb.from('settings').update(v).eq('id',1);load()};
+if(!u)return(<form onSubmit={login} className="mx-auto mt-32 grid max-w-sm gap-3 p-6"><h1 className="font-display text-4xl font-black text-gold">Panel CHOCOBARBER</h1>
+<input type="email" required placeholder="Correo" value={em} onChange={e=>setEm(e.target.value)} className="inp"/><input type="password" required placeholder="Contraseña" value={pw} onChange={e=>setPw(e.target.value)} className="inp"/>{err&&<p className="text-red-400">{err}</p>}<button className="btn">Entrar</button></form>);
+const list=bk.filter(b=>tab==='hoy'?b.day===hoy():tab==='proximas'?b.day>=hoy()&&b.status!=='cancelada':true);
+return(<div className="mx-auto max-w-4xl p-5"><div className="mb-5 flex items-center justify-between"><h1 className="font-display text-4xl font-black text-gold">Panel</h1><button className="text-mist" onClick={()=>{sb.auth.signOut();setU(null)}}>Salir</button></div>
+<div className="mb-5 flex gap-2 overflow-x-auto">{[['hoy','Citas de hoy'],['proximas','Próximas'],['todas','Todas'],['agenda','Horarios y bloqueos']].map(([k,n])=><button key={k} onClick={()=>setTab(k)} className={`px-4 py-2 ${tab===k?'bg-gold text-ink':'border border-white/20'}`}>{n}</button>)}</div>
+{tab!=='agenda'?(<div className="grid gap-3">{list.length===0&&<p className="text-mist">No hay citas.</p>}{list.map(b=>(<div key={b.id} className="border border-white/15 p-4"><div className="flex justify-between"><b>{b.day} · {b.at.slice(0,5)}</b><span className="text-gold">{b.status}</span></div>
+<p>{b.name} · <a className="underline" href={`https://wa.me/57${b.phone.replace(/^\+?57/,'')}`} target="_blank">{b.phone}</a></p><p className="text-mist">{b.service} {b.notes}</p>
+<div className="mt-3 flex gap-2"><button className="btn !py-1 !text-base" onClick={()=>setStatus(b.id,'confirmada')}>Confirmar</button><button className="btn2 !py-1 !text-base" onClick={()=>setStatus(b.id,'cancelada')}>Cancelar</button></div></div>))}</div>):
+(<div className="grid gap-8"><div className="flex flex-wrap items-center gap-4 border border-gold/40 p-4"><label className="flex items-center gap-2"><input type="checkbox" checked={!!st.enabled} onChange={e=>upd({enabled:e.target.checked})}/>Agenda habilitada para clientes</label>
+<label className="flex items-center gap-2">Minutos por cita<input type="number" min={10} step={5} defaultValue={st.slot_minutes} key={st.slot_minutes} onBlur={e=>upd({slot_minutes:+e.target.value})} className="inp !w-24"/></label></div>
+<div><h2 className="mb-2 font-display text-2xl">Días y horas de atención</h2>{wh.map(w=><p key={w.id} className="flex justify-between border-b border-white/10 py-1">{D[w.dow]} {w.opens.slice(0,5)}–{w.closes.slice(0,5)}{w.break_start&&` (descanso ${w.break_start.slice(0,5)}–${w.break_end.slice(0,5)})`}<button onClick={()=>del('weekly_hours',w.id)} className="text-red-400">Quitar</button></p>)}
+<form onSubmit={add('weekly_hours')} className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-6"><select name="dow" className="inp">{D.map((d,i)=><option key={i} value={i}>{d}</option>)}</select>
+<input name="opens" type="time" required title="Abre" className="inp"/><input name="closes" type="time" required title="Cierra" className="inp"/><input name="break_start" type="time" title="Inicio descanso" className="inp"/><input name="break_end" type="time" title="Fin descanso" className="inp"/><button className="btn !py-2 !text-base">Agregar</button></form>
+<p className="mt-1 text-sm text-mist">Orden: día, abre, cierra, inicio y fin de descanso (opcionales).</p></div>
+<div><h2 className="mb-2 font-display text-2xl">Bloquear fechas u horas</h2>{bl.map(k=><p key={k.id} className="flex justify-between border-b border-white/10 py-1">{k.day} {k.from_time?`${k.from_time.slice(0,5)}–${k.to_time.slice(0,5)}`:'todo el día'} {k.reason}<button onClick={()=>del('blocks',k.id)} className="text-red-400">Quitar</button></p>)}
+<form onSubmit={add('blocks')} className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-5"><input name="day" type="date" required className="inp"/><input name="from_time" type="time" title="Desde (vacío = todo el día)" className="inp"/><input name="to_time" type="time" title="Hasta" className="inp"/><input name="reason" placeholder="Motivo" className="inp"/><button className="btn !py-2 !text-base">Bloquear</button></form></div></div>)}</div>)}

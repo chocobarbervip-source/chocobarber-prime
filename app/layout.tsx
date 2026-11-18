@@ -1,0 +1,7 @@
+import './globals.css';import {Big_Shoulders_Display,Figtree} from 'next/font/google';import {CFG} from '@/lib/config';
+const d=Big_Shoulders_Display({subsets:['latin'],weight:['700','900'],variable:'--f-d'});const b=Figtree({subsets:['latin'],variable:'--f-b'});
+export const metadata={title:'CHOCOBARBER — Tu estilo, nuestra firma',description:'Barbería en Bogotá. Reserva tu cita en línea.'};
+export default function L({children}:{children:React.ReactNode}){return(<html lang="es" className={`${d.variable} ${b.variable}`}><body>{children}
+<a aria-label="WhatsApp" href={`https://wa.me/${CFG.wa}?text=${encodeURIComponent(CFG.waMsg)}`} target="_blank" className="fixed bottom-5 right-5 z-40 grid h-14 w-14 place-items-center rounded-full bg-[#25d366] shadow-lg transition hover:scale-110">
+<svg viewBox="0 0 32 32" className="h-8 w-8"><path fill="#fff" d="M16 4a12 12 0 00-10.300 18.100L4 28l6.100-1.600A12 12 0 1016 4zm0 2.200a9.800 9.800 0 11-5.100 18.200l-.4-.2-3.600.9 1-3.500-.2-.4A9.800 9.800 0 0116 6.200zm-3.600 4.600c-.3 0-.7.100-1 .5-.4.400-1.300 1.300-1.300 3s1.300 3.500 1.500 3.700c.2.300 2.600 4.100 6.400 5.600 3.100 1.200 3.700.9 4.400.9.700-.1 2.100-.9 2.400-1.700.3-.8.3-1.500.2-1.700l-.6-.3-2.100-1c-.3-.1-.5-.2-.8.2l-1 1.200c-.2.200-.4.300-.7.100-.3-.2-1.300-.5-2.400-1.500-.9-.8-1.500-1.800-1.700-2.100-.2-.3 0-.5.100-.6l.5-.6.300-.5c.1-.2 0-.4 0-.5l-1-2.300c-.2-.6-.5-.5-.7-.5z"/></svg></a>
+</body></html>)}

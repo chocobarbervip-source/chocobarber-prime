@@ -1,0 +1,8 @@
+@tailwind base;@tailwind components;@tailwind utilities;
+html{scroll-behavior:smooth}body{@apply bg-ink text-white font-sans}
+.inp{@apply w-full border border-white/20 bg-coal px-3 py-3 text-white outline-none focus:border-gold}
+.btn{@apply inline-block bg-gold px-6 py-3 font-display text-xl uppercase tracking-wider text-ink transition hover:bg-white disabled:opacity-40}
+.btn2{@apply inline-block border border-white/40 px-6 py-3 font-display text-xl uppercase tracking-wider transition hover:border-gold hover:text-gold}
+.pole{height:6px;background:repeating-linear-gradient(135deg,#b3261e 0 12px,#fff 12px 24px,#1d3f8f 24px 36px)}
+.hero-in{animation:up 1s ease both}@keyframes up{from{opacity:0;transform:translateY(24px)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

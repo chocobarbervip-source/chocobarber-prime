@@ -2,6 +2,7 @@
 import {useEffect,useState,useCallback} from 'react';import {sb} from '@/lib/supabase';
 const D=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
 const hoy=()=>new Date().toLocaleDateString('en-CA',{timeZone:'America/Bogota'});
+const wa=(b:any)=>{const n=b.phone.replace(/\D/g,'').replace(/^57/,'');const f=new Date(b.day+'T12:00').toLocaleDateString('es-CO',{dateStyle:'full'});return `https://wa.me/57${n}?text=${encodeURIComponent(`Hola ${b.name}, tu cita en ChocoBarber quedó confirmada para el ${f} a las ${b.at.slice(0,5)}. ¡Te esperamos!`)}`};
 export default function Admin(){
 const [u,setU]=useState<any>(null),[em,setEm]=useState(''),[pw,setPw]=useState(''),[err,setErr]=useState(''),[tab,setTab]=useState('hoy');
 const [bk,setBk]=useState<any[]>([]),[wh,setWh]=useState<any[]>([]),[bl,setBl]=useState<any[]>([]),[st,setSt]=useState<any>({});
@@ -21,7 +22,7 @@ return(<div className="mx-auto max-w-4xl p-5"><div className="mb-5 flex items-ce
 <div className="mb-5 flex gap-2 overflow-x-auto">{[['hoy','Citas de hoy'],['proximas','Próximas'],['todas','Todas'],['agenda','Horarios y bloqueos']].map(([k,n])=><button key={k} onClick={()=>setTab(k)} className={`px-4 py-2 ${tab===k?'bg-gold text-ink':'border border-white/20'}`}>{n}</button>)}</div>
 {tab!=='agenda'?(<div className="grid gap-3">{list.length===0&&<p className="text-mist">No hay citas.</p>}{list.map(b=>(<div key={b.id} className="border border-white/15 p-4"><div className="flex justify-between"><b>{b.day} · {b.at.slice(0,5)}</b><span className="text-gold">{b.status}</span></div>
 <p>{b.name} · <a className="underline" href={`https://wa.me/57${b.phone.replace(/^\+?57/,'')}`} target="_blank">{b.phone}</a></p><p className="text-mist">{b.service} {b.notes}</p>
-<div className="mt-3 flex gap-2"><button className="btn !py-1 !text-base" onClick={()=>setStatus(b.id,'confirmada')}>Confirmar</button><button className="btn2 !py-1 !text-base" onClick={()=>setStatus(b.id,'cancelada')}>Cancelar</button></div></div>))}</div>):
+<div className="mt-3 flex gap-2"><button className="btn !py-1 !text-base" onClick={()=>setStatus(b.id,'confirmada')}>Confirmar</button><button className="btn2 !py-1 !text-base" onClick={()=>setStatus(b.id,'cancelada')}>Cancelar</button>{b.status==='confirmada'&&<a className="btn2 !py-1 !text-base" target="_blank" href={wa(b)}>Avisar por WhatsApp</a>}</div></div>))}</div>):
 (<div className="grid gap-8"><div className="flex flex-wrap items-center gap-4 border border-gold/40 p-4"><label className="flex items-center gap-2"><input type="checkbox" checked={!!st.enabled} onChange={e=>upd({enabled:e.target.checked})}/>Agenda habilitada para clientes</label>
 <label className="flex items-center gap-2">Minutos por cita<input type="number" min={10} step={5} defaultValue={st.slot_minutes} key={st.slot_minutes} onBlur={e=>upd({slot_minutes:+e.target.value})} className="inp !w-24"/></label></div>
 <div><h2 className="mb-2 font-display text-2xl">Días y horas de atención</h2>{wh.map(w=><p key={w.id} className="flex justify-between border-b border-white/10 py-1">{D[w.dow]} {w.opens.slice(0,5)}–{w.closes.slice(0,5)}{w.break_start&&` (descanso ${w.break_start.slice(0,5)}–${w.break_end.slice(0,5)})`}<button onClick={()=>del('weekly_hours',w.id)} className="text-red-400">Quitar</button></p>)}

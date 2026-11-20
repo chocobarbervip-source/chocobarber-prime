@@ -9,11 +9,11 @@ const pick=async(d:string)=>{setDay(d);setAt('');const {data}=await sb.rpc('avai
 const send=async(e:any)=>{e.preventDefault();if(!at){setMsg('Elige una hora.');return}setBusy(true);setMsg('');
  const f:any=Object.fromEntries(new FormData(e.target));
  const r=await fetch('/api/book',{method:'POST',body:JSON.stringify({...f,day,at})});const j=await r.json();setBusy(false);
- if(j.ok)setDone({...f,day,at});else{setMsg(j.error==='horario_no_disponible'?'Ese horario acaba de ocuparse. Elige otro.':'Revisa tu nombre y tu teléfono e inténtalo de nuevo.');pick(day)}};
+ if(j.ok)setDone({...f,day,at,id:j.id});else{setMsg(j.error==='horario_no_disponible'?'Ese horario acaba de ocuparse. Elige otro.':'Revisa tu nombre y tu teléfono e inténtalo de nuevo.');pick(day)}};
 if(ready===null)return <p className="text-mist">Cargando agenda…</p>;
 if(!ready)return <p className="border border-gold/40 p-6 text-mist">La agenda está pendiente de habilitación. Mientras tanto, escríbenos por WhatsApp para reservar.</p>;
 if(done)return(<div className="border border-gold p-8 text-center"><h3 className="font-display text-4xl font-black text-gold">¡TU CITA ESTÁ RESERVADA!</h3><p className="mt-2 text-mist">Gracias por elegir ChocoBarber. Nos vemos pronto.</p>
-<dl className="mt-6 space-y-1"><dd>{done.name}</dd><dd>{fmt(done.day)} · {done.at.slice(0,5)}</dd>{done.service&&<dd>{done.service}</dd>}{done.notes&&<dd className="text-mist">{done.notes}</dd>}</dl></div>);
+<dl className="mt-6 space-y-1"><dd>{done.name}</dd><dd>{fmt(done.day)} · {done.at.slice(0,5)}</dd>{done.service&&<dd>{done.service}</dd>}{done.notes&&<dd className="text-mist">{done.notes}</dd>}</dl>{done.id&&<p className="mt-4 text-sm text-mist">Para cancelar o cambiar tu cita guarda este enlace:<br/><a className="break-all text-gold underline" href={`/cita?id=${done.id}`}>{window.location.origin}/cita?id={done.id}</a></p>}</div>);
 return(<form onSubmit={send} className="grid gap-4 md:grid-cols-2">
 <div><label className="mb-1 block text-sm text-mist">Fecha</label><input type="date" required min={today()} value={day} onChange={e=>pick(e.target.value)} className="inp"/>
 {day&&<div className="mt-4 grid grid-cols-3 gap-2">{slots.length===0&&<p className="col-span-3 text-mist">No hay horarios para este día.</p>}

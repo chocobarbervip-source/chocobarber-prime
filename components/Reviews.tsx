@@ -1,0 +1,8 @@
+'use client';
+import {useEffect,useState} from 'react';import {sb} from '@/lib/supabase';
+export default function Reviews(){
+const [l,setL]=useState<any[]>([]),[m,setM]=useState('');
+useEffect(()=>{sb.from('reviews').select('name,stars,body').eq('approved',true).order('created_at',{ascending:false}).limit(12).then(({data})=>setL(data||[]))},[]);
+const send=async(e:any)=>{e.preventDefault();const f:any=Object.fromEntries(new FormData(e.target));const {error}=await sb.rpc('submit_review',{p_name:f.name,p_stars:+f.stars,p_body:f.body});if(error)setM('No se pudo enviar. Revisa los datos.');else{setM('¡Gracias! Tu opinión se publicará cuando la revisemos.');e.target.reset()}};
+return(<div>{l.length>0&&<div className="mb-10 grid gap-4 md:grid-cols-2">{l.map((r,i)=>(<figure key={i} className="border border-white/15 p-5"><p className="text-gold">{'★'.repeat(r.stars)}</p><blockquote className="mt-2">{r.body}</blockquote><figcaption className="mt-2 text-sm text-mist">— {r.name}</figcaption></figure>))}</div>}
+<form onSubmit={send} className="grid max-w-xl gap-3"><h3 className="font-display text-2xl">Deja tu opinión</h3><input name="name" required minLength={2} maxLength={60} placeholder="Tu nombre" className="inp"/><select name="stars" className="inp" defaultValue="5">{[5,4,3,2,1].map(n=><option key={n} value={n}>{'★'.repeat(n)}</option>)}</select><textarea name="body" required minLength={5} maxLength={400} placeholder="¿Cómo te fue?" className="inp"/><label className="flex gap-2 text-sm text-mist"><input type="checkbox" required/>Autorizo (o mi acudiente autoriza) publicar mi opinión con mi nombre.</label>{m&&<p className="text-gold">{m}</p>}<button className="btn">Enviar opinión</button></form></div>)}

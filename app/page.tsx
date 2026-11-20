@@ -1,6 +1,6 @@
-import Gallery from '@/components/Gallery';import Booking from '@/components/Booking';import MyCard from '@/components/MyCard';import {CFG} from '@/lib/config';
+import Gallery from '@/components/Gallery';import Booking from '@/components/Booking';import MyCard from '@/components/MyCard';import Reviews from '@/components/Reviews';import {CFG} from '@/lib/config';
 const maps=`https://www.google.com/maps?q=${encodeURIComponent(CFG.address)}`;
-const nav=[['Inicio','#inicio'],['Nosotros','#nosotros'],['Galería','#galeria'],['Reservar cita','#reservar'],['Mi tarjeta','#tarjeta'],['Ubicación','#ubicacion'],['Contacto','#contacto']];
+const nav=[['Inicio','#inicio'],['Nosotros','#nosotros'],['Galería','#galeria'],['Reservar cita','#reservar'],['Opiniones','#opiniones'],['Mi tarjeta','#tarjeta'],['Ubicación','#ubicacion'],['Contacto','#contacto']];
 export default function Home(){return(<main>
 <header className="fixed inset-x-0 top-0 z-30 flex items-center gap-6 bg-black/80 px-5 py-3 backdrop-blur"><b className="font-display text-2xl font-black tracking-wider text-gold">CHOCOBARBER</b>
 <nav className="flex gap-5 overflow-x-auto whitespace-nowrap text-sm text-mist">{nav.map(([n,h])=><a key={h} href={h} className="transition hover:text-gold">{n}</a>)}</nav></header>
@@ -21,6 +21,7 @@ export default function Home(){return(<main>
 <section id="galeria" className="mx-auto max-w-6xl px-6 py-24"><h2 className="font-display text-5xl font-black">Antes y después</h2><p className="mb-8 mt-2 text-mist">Mira la calidad de nuestros cortes antes de reservar. Desliza y toca una foto para ampliarla.</p><Gallery/></section>
 <div className="pole"/>
 <section id="reservar" className="mx-auto max-w-4xl px-6 py-24"><h2 className="mb-8 font-display text-5xl font-black">Reservar cita</h2><Booking/></section>
+<section id="opiniones" className="mx-auto max-w-4xl px-6 py-24"><h2 className="mb-8 font-display text-5xl font-black">Opiniones</h2><Reviews/></section>
 <section id="tarjeta" className="mx-auto max-w-4xl px-6 py-24"><h2 className="mb-2 font-display text-5xl font-black">Mi tarjeta de sellos</h2><p className="mb-8 text-mist">Cada corte suma un sello. En el 4.º corte, mitad de precio; en el 7.º, corte gratis.</p><MyCard/></section>
 <section id="ubicacion" className="bg-coal px-6 py-24"><div className="mx-auto max-w-5xl"><h2 className="font-display text-5xl font-black">Ubicación</h2><p className="my-3 text-mist">{CFG.address}</p>
 <iframe title="Mapa" src={`${maps}&output=embed`} loading="lazy" className="h-80 w-full border-0 grayscale"/>

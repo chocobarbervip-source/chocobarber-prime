@@ -30,4 +30,5 @@ export default function Home(){return(<main>
 <p className="mt-4 text-mist">{CFG.address}</p><p className="text-mist">WhatsApp: 320 218 7269 · Instagram: {CFG.igUser}</p>
 <div className="mt-6 flex flex-wrap justify-center gap-3"><a className="btn" target="_blank" href={`https://wa.me/${CFG.wa}`}>Escribir por WhatsApp</a><a className="btn2" target="_blank" href={CFG.ig}>Visitar Instagram</a></div></section>
 <footer className="pole"/><p className="py-8 text-center font-display text-xl tracking-widest text-gold">CHOCOBARBER — EL ESTILO NO SE IMPROVISA, SE TRABAJA.</p>
+<p className="px-6 pb-24 text-center text-xs text-mist">Página creada por Elmer Moscoso · ¿Quieres una para tu negocio? <a className="underline transition hover:text-gold" target="_blank" href={`https://wa.me/573224090140?text=${encodeURIComponent('Hola Elmer, vi tu trabajo en la página de ChocoBarber y me interesa una para mi negocio.')}`}>Escríbeme por WhatsApp</a></p>
 </main>)}

@@ -6,3 +6,9 @@ html{scroll-behavior:smooth}body{@apply bg-ink text-white font-sans}
 .pole{height:6px;background:repeating-linear-gradient(135deg,#b3261e 0 12px,#fff 12px 24px,#1d3f8f 24px 36px)}
 .hero-in{animation:up 1s ease both}@keyframes up{from{opacity:0;transform:translateY(24px)}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* Decoración: textura y luz */
+body{background-image:radial-gradient(circle at 15% 0%,rgba(201,169,110,.12),transparent 40%),radial-gradient(circle at 90% 60%,rgba(201,169,110,.08),transparent 45%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.8' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+main h2::after{content:"";display:block;width:56px;height:3px;background:#c9a96e;margin-top:12px}
+main #contacto h2::after{margin-left:auto;margin-right:auto}
+main .bg-coal{background-color:rgba(22,21,19,.82)}
+main section+section{border-top:1px solid rgba(201,169,110,.15)}
